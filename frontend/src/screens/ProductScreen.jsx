@@ -23,6 +23,8 @@ const ProductScreen = () => {
   <>
   <Link className='btn btn-light my-3' to='/'>Go Back</Link>
 
+  
+
 { isLoading ?(
   <Loader/>
 ):error?(
