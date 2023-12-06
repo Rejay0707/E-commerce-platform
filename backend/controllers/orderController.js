@@ -4,33 +4,87 @@ import Order from '../models/orderModel.js';
 // @desc  Create new order
 // @route POST/api/orders
 // @access Public
-const getProducts=asyncHandler(async (req,res)=>{
-    res.send('add order items')
+const addOrderItems=asyncHandler(async (req,res)=>{
+    const {
+        orderItems,
+        shippingAddress,
+        paymentMethod,
+        itemPrice,
+        taxPrice,
+        shippingPrice,
+        totalPrice,
+    }=req.body;
+    if(orderItems&&orderItems.length===0){
+        res.status(400);
+        throw new Error('No order items')
+    }else{
+        const order=new Order({
+            orderItems:orderItems.map((x)=>({
+                ...x,
+                product:x._id,
+                _id:undefined
+            })),
+            user:req.user._id,
+            shippingAddress,
+            paymentMethod,
+            itemPrice,
+            taxPrice,
+            shippingPrice,
+            totalPrice,
+        })
+        const createdOrder=await order.save();
+        res.status(201).json(createdOrder)
+    }
 });
 
 // @desc  Get logged in user orders
 // @route GET/api/orders/myorders
 // @access Public
 const getMyOrders=asyncHandler(async (req,res)=>{
-    res.send('get my orders')
+    const orders=await Order.find({user:req.user._id});
+    res.status(200).json(orders)
 });
 
 // @desc  GET order by ID
 // @route GET/api/orders/:id
 // @access Private
 const getOrderById=asyncHandler(async (req,res)=>{
-    res.send('get order by id');
+    const order=await Order.findById(req.params.id).populate('user','name email');
+
+    if(order){
+        res.status(200).json(order);
+    }else{
+        res.status(404);
+        throw new Error('Order not found');
+    }
 });
 
 // @desc  Update order to paid
-// @route GET/api/orders/:id/pay
+// @route PUT/api/orders/:id/pay
 // @access Private
 const updateOrderToPaid=asyncHandler(async (req,res)=>{
-    res.send('update order to paid')
+    const order=await Order.findById(req.params.id);
+
+    if(order){
+        order.isPaid=true;
+        order.paidAt=Date.now();
+        order.paymentResult={
+            id:req.body.id,
+            status:req.bady.status,
+            update_time:req.body.update_time,
+            email_address:req.body.prayer.email_address,
+        };
+        const updatedOrder=await order.save();
+
+        res.status(200).json(updatedOrder)
+    }else{
+        res.status(404);
+        throw new Error('Order not found');
+    }
 });
 
 // @desc  Update order to deleivered
-// @route GET/api/orders/:id/deliver
+// @route PUT/api/orders/:id/deliver
 // @access Private/Admin
 const updateOrderToDelivered=asyncHandler(async (req,res)=>{
     res.send('update order to delivered')
