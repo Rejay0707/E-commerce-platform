@@ -2,7 +2,9 @@ import {Link,useParams} from 'react-router-dom';
 import {Row,Col,ListGroup,Image,Form,Button,Card, ListGroupItem} from 'react-bootstrap'
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { useGetOrderDetailsQuery } from '../slices/ordersApiSlice';
+import { useGetOrderDetailsQuery,usePayOrderMutation } from '../slices/ordersApiSlice';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 
 
@@ -11,6 +13,34 @@ const OrderScreen = () => {
 
     const {data:order,refetch,isLoading,error}=useGetOrderDetailsQuery(orderId);
     console.log(order);
+
+    const [payOrder,{isLoading:loadingPay}]=usePayOrderMutation();
+
+    const {useInfo}=useSelector((state)=>state.auth);
+
+    // function onApprove(){}
+    // function onError(){}
+    // function createOrder(){}
+    async function onApproveText(){
+        await payOrder({orderId});
+        refetch();
+        
+        const successMessage = `Payment successful`;
+
+        toast.success('Payment successful');
+        console.log(successMessage)
+    }
+
+    //     <ListGroup>
+    //     <ListGroup.Item>
+    //     <div>
+    //     <p>
+    //     <Message variant='success'>Paid on </Message>
+    //     </p>
+    //     </div>
+    //     </ListGroup.Item>
+    // </ListGroup>
+    
     
     return( 
     isLoading?<Loader/>:error?<Message variant='danger' />:(
@@ -46,13 +76,13 @@ const OrderScreen = () => {
                         <p>
                             <strong>Method:</strong>{order.paymentMethod}
                         </p>
-                        {order.isPaid?(
-                            <Message variant='success'>Paid on {order.paidAt}</Message>
+                        {/* {order.isPaid?(
+                            <Message variant='success'>Paid on </Message>
                         ):(
                             <Message variant='danger'>
                                 Not Paid
                             </Message>
-                        )}
+                        )} */}
                     </ListGroup.Item>
 
                     <ListGroup.Item>
@@ -109,6 +139,25 @@ const OrderScreen = () => {
                                     <Col>${order.totalPrice}</Col>
                                 </Row>
                             </ListGroup.Item>
+
+                            {!order.isPaid&&(
+                                <ListGroup.Item>
+                                    {loadingPay&&<Loader/>}
+
+                                    
+                                        <div>
+                                            <Button onClick={onApproveText} style={{margin:'10px'}}>Test Pay Order</Button>
+                                            <div>
+                                                <payPalButtons>
+                                                    {/* createOrder={createOrder}
+                                                    onApprove={onApprove}
+                                                    onError={onError} */}
+                                                </payPalButtons>
+                                            </div>
+                                        </div>
+                                    
+                                </ListGroup.Item>
+                            )}
 
                             </ListGroup>
                         </Card>
