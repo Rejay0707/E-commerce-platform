@@ -1,10 +1,11 @@
 import {Link,useParams} from 'react-router-dom';
-import {Row,Col,ListGroup,Image,Form,Button,Card, ListGroupItem} from 'react-bootstrap'
+import {Row,Col,ListGroup,Image,Form,Button,Card,} from 'react-bootstrap'
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { useGetOrderDetailsQuery,usePayOrderMutation } from '../slices/ordersApiSlice';
+import { useGetOrderDetailsQuery,usePayOrderMutation,useDeliverOrderMutation} from '../slices/ordersApiSlice';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+
 
 
 
@@ -16,7 +17,9 @@ const OrderScreen = () => {
 
     const [payOrder,{isLoading:loadingPay}]=usePayOrderMutation();
 
-    const {useInfo}=useSelector((state)=>state.auth);
+    const [deliverOrder,{isLoading:loadingDeliver}]=useDeliverOrderMutation();
+
+    const {userInfo}=useSelector((state)=>state.auth);
 
     // function onApprove(){}
     // function onError(){}
@@ -25,10 +28,6 @@ const OrderScreen = () => {
         await payOrder({orderId});
         refetch();
         
-        const successMessage = `Payment successful`;
-
-        toast.success('Payment successful');
-        console.log(successMessage)
     }
 
     //     <ListGroup>
@@ -40,7 +39,15 @@ const OrderScreen = () => {
     //     </div>
     //     </ListGroup.Item>
     // </ListGroup>
-    
+    const deliverOrderHandler=async ()=>{
+        try {
+            await deliverOrder(orderId);
+            refetch();
+            toast.success('Order delivered')
+        } catch(err) {
+            toast.error(err?.data?.message||err.message);
+        }
+    };
     
     return( 
     isLoading?<Loader/>:error?<Message variant='danger' />:(
@@ -62,12 +69,12 @@ const OrderScreen = () => {
                             {order.shippingAddress.address},{order.shippingAddress.city}{''}
                             {order.shippingAddress.postalCodal},{order.shippingAddress.country}
                         </p>
-                        {order.isDelivered?(
-                            <Message variant='success'>Delivered on {order.deliveredAt}</Message>
-                        ):(
-                            <Message variant='danger'>
-                                Not Delivered
-                            </Message>
+                        {order.isDelivered ? (
+                        <Message variant='success'>
+                        Delivered on {order.deliveredAt}
+                        </Message>
+                        ) : (
+                        <Message variant='danger'>Not Delivered</Message>
                         )}
                     </ListGroup.Item>
 
@@ -158,7 +165,21 @@ const OrderScreen = () => {
                                     
                                 </ListGroup.Item>
                             )}
-
+                                {loadingDeliver && <Loader />}
+                                {userInfo && 
+                                userInfo.isAdmin&&
+                                
+                                !order.isDelivered &&(
+                                    <ListGroup.Item>
+                                        <Button
+                                        type='button'
+                                        className='btn btn-block'
+                                        onClick={deliverOrderHandler}
+                                        >
+                                            Mark As Delivered
+                                        </Button>
+                                    </ListGroup.Item>
+                                )}
                             </ListGroup>
                         </Card>
                     </Col>
@@ -171,3 +192,4 @@ const OrderScreen = () => {
 }
 
 export default OrderScreen
+
