@@ -25,8 +25,9 @@ const OrderScreen = () => {
     // function onError(){}
     // function createOrder(){}
     async function onApproveText(){
-        await payOrder({orderId});
+        await payOrder({orderId, details: { payer: {}}});
         refetch();
+        toast.success('Payment Successfull')
         
     }
 
@@ -83,13 +84,13 @@ const OrderScreen = () => {
                         <p>
                             <strong>Method:</strong>{order.paymentMethod}
                         </p>
-                        {/* {order.isPaid?(
+                        {order.isPaid?(
                             <Message variant='success'>Paid on </Message>
                         ):(
                             <Message variant='danger'>
                                 Not Paid
                             </Message>
-                        )} */}
+                        )}
                     </ListGroup.Item>
 
                     <ListGroup.Item>
@@ -99,10 +100,12 @@ const OrderScreen = () => {
                                 <Row>
                                     <Col md={1}>
                                         <Image src={item.image} alt={item.name} fluid rounded />
+                                        {console.log('his')}
                                     </Col>
                                     <Col>
                                         <Link to={`/product/${item.product}`}>
                                         {item.name}
+                                        {console.log(item.name)}
                                         </Link>
                                     </Col>
                                     <Col md={4}>
@@ -127,8 +130,8 @@ const OrderScreen = () => {
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Items</Col>
-                                    <Col>${order.itemPrice}</Col>
-                                    
+                                    <Col>${order.itemsPrice}</Col>
+                                    {console.log(order.itemsPrice)}
                                 </Row>
 
                                 <Row>
@@ -192,4 +195,8 @@ const OrderScreen = () => {
 }
 
 export default OrderScreen
+
+
+
+
 

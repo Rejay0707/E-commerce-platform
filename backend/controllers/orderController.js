@@ -35,6 +35,7 @@ const addOrderItems=asyncHandler(async (req,res)=>{
         const createdOrder=await order.save();
         res.status(201).json(createdOrder)
     }
+
 });
 
 // @desc  Get logged in user orders
@@ -96,6 +97,7 @@ const updateOrderToDelivered=asyncHandler(async (req,res)=>{
         const updateOrder =await order.save();
 
         res.status(200).json(updateOrder);
+        console.log(order)
         }else{
             res.status(404);
             throw new Error('Order not found');

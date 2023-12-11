@@ -33,7 +33,7 @@ export const PlaceOrderScreen = () => {
                 itemsPrice:cart.itemPrice,
                 shippingPrice:cart.shippingPrice,
                 taxPrice:cart.taxPrice,
-                // totalPrice:cart.totalPrice,
+                totalPrice:cart.totalPrice,
             }).unwrap();
             dispatch(clearCartItems());
             navigate(`/order/${res._id}`);
