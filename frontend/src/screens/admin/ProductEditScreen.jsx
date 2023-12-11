@@ -25,7 +25,7 @@ const ProductEditScreen = () => {
         
         const [updateProduct,{isLoading:loadingUpdate}]=useUpdateProductMutation();
         
-        const [uploadProductImage,{isLoading:loading}]=useUploadProductImageMutation();
+        const [uploadProductImage,{isLoading:loadingUpload}]=useUploadProductImageMutation();
         const navigate=useNavigate();
 
         const submitHandler = async (e) => {
@@ -116,7 +116,7 @@ return (
                     onChange={uploadFileHandler}
                     type='file'
                     ></Form.Control>
-                    {/* {loadingUpload && <Loader />} */}
+                    {loadingUpload && <Loader />}
             </Form.Group>
 
                 <Form.Group controlId='brand' className='my-2'>
