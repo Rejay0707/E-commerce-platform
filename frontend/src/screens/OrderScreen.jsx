@@ -85,7 +85,7 @@ const OrderScreen = () => {
                             <strong>Method:</strong>{order.paymentMethod}
                         </p>
                         {order.isPaid?(
-                            <Message variant='success'>Paid on </Message>
+                            <Message variant='success'>`Paid on {order.paidAt}` </Message>
                         ):(
                             <Message variant='danger'>
                                 Not Paid
