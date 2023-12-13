@@ -45,8 +45,9 @@ const OrderListScreen = () => {
                                 <FaTimes style={{color:'red'}} />                            )}
                         </td>
                         <td>
-                        {orders.isDelivered ? (
-                        orders.isdeliveredAt.substring(0, 10)
+                        {order.isDelivered ? (
+                        order.deliveredAt.substring(0, 10)
+                        
                         ) : (
                         <FaTimes style={{ color: 'red' }} />
                         )}
